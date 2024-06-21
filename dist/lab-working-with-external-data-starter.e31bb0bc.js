@@ -12280,23 +12280,23 @@ function initialLoad() {
   return _initialLoad.apply(this, arguments);
 }
 function _initialLoad() {
-  _initialLoad = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+  _initialLoad = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
     var response, jsonData;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          _context2.next = 2;
+          _context3.next = 2;
           return fetch("https://api.thecatapi.com/v1/breeds?limit=10&page=0", {
             headers: {
               'x-api-key': API_KEY
             }
           });
         case 2:
-          response = _context2.sent;
-          _context2.next = 5;
+          response = _context3.sent;
+          _context3.next = 5;
           return response.json();
         case 5:
-          jsonData = _context2.sent;
+          jsonData = _context3.sent;
           console.log(jsonData);
           jsonData.forEach(function (breed) {
             var option = document.createElement("option");
@@ -12306,9 +12306,9 @@ function _initialLoad() {
           });
         case 8:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12331,7 +12331,8 @@ initialLoad();
 
 breedSelect.addEventListener("change", handleSelection);
 function handleSelection(e) {
-  console.log(e.target);
+  Carousel.clear();
+  // console.log(e.target.textContent);
   function getBreedsInfo() {
     return _getBreedsInfo.apply(this, arguments);
   }
@@ -12353,12 +12354,11 @@ function handleSelection(e) {
             return specificBreeds.json();
           case 5:
             jsonData = _context.sent;
-            console.log(jsonData);
-            jsonData.forEach(function (dog) {
-              var item = Carousel.createCarouselItem(dog.url, "", "");
+            jsonData.forEach(function (cat) {
+              var item = Carousel.createCarouselItem(cat.url, "", "");
               Carousel.appendCarousel(item);
             });
-          case 8:
+          case 7:
           case "end":
             return _context.stop();
         }
@@ -12367,7 +12367,38 @@ function handleSelection(e) {
     return _getBreedsInfo.apply(this, arguments);
   }
   ;
+  function getFacts() {
+    return _getFacts.apply(this, arguments);
+  }
+  function _getFacts() {
+    _getFacts = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var facts, jsonData;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return fetch("https://api.thecatapi.com/v1/breeds/search?q=".concat(e.target.selectedOptions[0].text.replace(/ /g, "_")), {
+              headers: {
+                'x-api-key': API_KEY
+              }
+            });
+          case 2:
+            facts = _context2.sent;
+            _context2.next = 5;
+            return facts.json();
+          case 5:
+            jsonData = _context2.sent;
+            infoDump.textContent = jsonData[0].description;
+          case 7:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return _getFacts.apply(this, arguments);
+  }
   getBreedsInfo();
+  getFacts();
 
   // for (const option of options){
   //   let breedID = option.getAttribute("value");
@@ -12464,14 +12495,14 @@ function favourite(_x) {
  *   your code should account for this.
  */
 function _favourite() {
-  _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+  _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(imgId) {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3);
+    }, _callee4);
   }));
   return _favourite.apply(this, arguments);
 }
@@ -12500,7 +12531,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59149" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54093" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

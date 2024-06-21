@@ -57,23 +57,33 @@ initialLoad();
 breedSelect.addEventListener("change", handleSelection);
 
 function handleSelection(e){
-  console.log(e.target);
+  Carousel.clear();
+  // console.log(e.target.textContent);
 
   async function getBreedsInfo(){
     const specificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${e.target.value}&limit=10`, {headers: {
       'x-api-key': API_KEY
     }});
     const jsonData = await specificBreeds.json();
-    console.log(jsonData)
 
-    jsonData.forEach((dog) => {
-      let item = Carousel.createCarouselItem(dog.url, "", "");
+    jsonData.forEach((cat) => {
+      let item = Carousel.createCarouselItem(cat.url, "", "");
       Carousel.appendCarousel(item);
     });
 
   };
 
+  async function getFacts(){
+    const facts = await fetch(`https://api.thecatapi.com/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, {headers: {
+      'x-api-key': API_KEY
+    }});
+    const jsonData = await facts.json();
+
+    infoDump.textContent = jsonData[0].description;
+  }
+
   getBreedsInfo();
+  getFacts();
 
   // for (const option of options){
   //   let breedID = option.getAttribute("value");

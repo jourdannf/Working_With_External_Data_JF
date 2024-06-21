@@ -27,6 +27,7 @@ async function initialLoad() {
     'x-api-key': API_KEY
   }});
   const jsonData = await response.json();
+  console.log(jsonData);
   jsonData.forEach(breed => {
     const option = document.createElement("option");
     option.setAttribute("value", breed.id);
@@ -53,19 +54,52 @@ initialLoad();
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
 
-breedSelect.addEventListener("click", handleSelection);
+breedSelect.addEventListener("change", handleSelection);
 
 function handleSelection(e){
-  const options = e.target.children;
+  console.log(e.target);
 
-  options.forEach(option => {
-    if (option.getAttribute("selected")){
-      async function getBreedInfo(){
-        const breedInfo = await fetch("");
-      }
-    }
-  });
+  async function getBreedsInfo(){
+    const specificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${e.target.value}&limit=10`, {headers: {
+      'x-api-key': API_KEY
+    }});
+    const jsonData = await specificBreeds.json();
+    console.log(jsonData)
+
+    jsonData.forEach((dog) => {
+      let item = Carousel.createCarouselItem(dog.url, "", "");
+      Carousel.appendCarousel(item);
+    });
+
+  };
+
+  getBreedsInfo();
+
+  // for (const option of options){
+  //   let breedID = option.getAttribute("value");
+  //   console.log(option);
+  //   if (option.getAttribute("selected")){
+  //     async function getBreedInfo(){
+  //       const sprecificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedID}`);
+  //       console.log(sprecificBreeds);
+  //     }
+
+  //     getBreedInfo
+  //   }
+  // }
+
+  // options.forEach(option => {
+  //   breedID = option.getAttribute(value);
+  //   if (option.getAttribute("selected")){
+  //     async function getBreedInfo(){
+  //       const sprecificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedID}`);
+  //       console.log(sprecificBreeds);
+  //     }
+  //   }
+  // });
 }
+
+
 
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."

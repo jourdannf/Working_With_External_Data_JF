@@ -12297,13 +12297,14 @@ function _initialLoad() {
           return response.json();
         case 5:
           jsonData = _context2.sent;
+          console.log(jsonData);
           jsonData.forEach(function (breed) {
             var option = document.createElement("option");
             option.setAttribute("value", breed.id);
             option.textContent = breed.name;
             breedSelect.appendChild(option);
           });
-        case 7:
+        case 8:
         case "end":
           return _context2.stop();
       }
@@ -12328,34 +12329,68 @@ initialLoad();
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
 
-breedSelect.addEventListener("click", handleSelection);
+breedSelect.addEventListener("change", handleSelection);
 function handleSelection(e) {
-  var options = e.target.children;
-  options.forEach(function (option) {
-    if (option.getAttribute("selected")) {
-      function getBreedInfo() {
-        return _getBreedInfo.apply(this, arguments);
-      }
-      function _getBreedInfo() {
-        _getBreedInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-          var breedInfo;
-          return _regeneratorRuntime().wrap(function _callee$(_context) {
-            while (1) switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return fetch("");
-              case 2:
-                breedInfo = _context.sent;
-              case 3:
-              case "end":
-                return _context.stop();
-            }
-          }, _callee);
-        }));
-        return _getBreedInfo.apply(this, arguments);
-      }
-    }
-  });
+  console.log(e.target);
+  function getBreedsInfo() {
+    return _getBreedsInfo.apply(this, arguments);
+  }
+  function _getBreedsInfo() {
+    _getBreedsInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var specificBreeds, jsonData;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(e.target.value, "&limit=10"), {
+              headers: {
+                'x-api-key': API_KEY
+              }
+            });
+          case 2:
+            specificBreeds = _context.sent;
+            _context.next = 5;
+            return specificBreeds.json();
+          case 5:
+            jsonData = _context.sent;
+            console.log(jsonData);
+            jsonData.forEach(function (dog) {
+              var item = Carousel.createCarouselItem(dog.url, "", "");
+              Carousel.appendCarousel(item);
+            });
+          case 8:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return _getBreedsInfo.apply(this, arguments);
+  }
+  ;
+  getBreedsInfo();
+
+  // for (const option of options){
+  //   let breedID = option.getAttribute("value");
+  //   console.log(option);
+  //   if (option.getAttribute("selected")){
+  //     async function getBreedInfo(){
+  //       const sprecificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedID}`);
+  //       console.log(sprecificBreeds);
+  //     }
+
+  //     getBreedInfo
+  //   }
+  // }
+
+  // options.forEach(option => {
+  //   breedID = option.getAttribute(value);
+  //   if (option.getAttribute("selected")){
+  //     async function getBreedInfo(){
+  //       const sprecificBreeds = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedID}`);
+  //       console.log(sprecificBreeds);
+  //     }
+  //   }
+  // });
 }
 
 /**
@@ -12465,7 +12500,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51664" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59149" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

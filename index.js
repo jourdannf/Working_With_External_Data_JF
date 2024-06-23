@@ -123,6 +123,13 @@ initialLoad();
 
 breedSelect.addEventListener("change", axiosHandleSelection);
 
+function createCarousel(data){
+  data.forEach((cat) => {
+    let item = Carousel.createCarouselItem(cat.url, "", cat.id);
+    Carousel.appendCarousel(item);
+  });
+}
+
 function axiosHandleSelection(e){
   e.preventDefault();
   Carousel.clear();
@@ -138,10 +145,12 @@ function axiosHandleSelection(e){
     const specificBreeds = await axios.get(`/v1/images/search?breed_ids=${e.target.value}&limit=100`, config);
     console.log(specificBreeds.data);
 
-    specificBreeds.data.forEach((cat) => {
-      let item = Carousel.createCarouselItem(cat.url, "", cat.id);
-      Carousel.appendCarousel(item);
-    });
+    createCarousel(specificBreeds.data);
+
+    // specificBreeds.data.forEach((cat) => {
+    //   let item = Carousel.createCarouselItem(cat.url, "", cat.id);
+    //   Carousel.appendCarousel(item);
+    // });
 
     const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
 
@@ -257,6 +266,19 @@ export async function favourite(imgId) {
  *    If that isn't in its own function, maybe it should be so you don't have to
  *    repeat yourself in this section.
  */
+
+async function getFavourites() {
+  const favs = await axios.get(`/v1/favourites`);
+  let favoriteImgs = [];
+  console.log(favs);
+  favs.data.forEach((img)=> {
+    favoriteImgs.push(img.image);
+  });
+  Carousel.clear();
+  createCarousel(favoriteImgs);
+}
+
+getFavouritesBtn.addEventListener("click", getFavourites);
 
 /**
  * 10. Test your site, thoroughly!

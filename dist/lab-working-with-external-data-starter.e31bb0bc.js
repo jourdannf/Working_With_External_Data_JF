@@ -12390,6 +12390,12 @@ function _initialLoad() {
 ;
 initialLoad();
 breedSelect.addEventListener("change", axiosHandleSelection);
+function createCarousel(data) {
+  data.forEach(function (cat) {
+    var item = Carousel.createCarouselItem(cat.url, "", cat.id);
+    Carousel.appendCarousel(item);
+  });
+}
 function axiosHandleSelection(e) {
   e.preventDefault();
   Carousel.clear();
@@ -12414,10 +12420,12 @@ function axiosHandleSelection(e) {
           case 2:
             specificBreeds = _context.sent;
             console.log(specificBreeds.data);
-            specificBreeds.data.forEach(function (cat) {
-              var item = Carousel.createCarouselItem(cat.url, "", cat.id);
-              Carousel.appendCarousel(item);
-            });
+            createCarousel(specificBreeds.data);
+
+            // specificBreeds.data.forEach((cat) => {
+            //   let item = Carousel.createCarouselItem(cat.url, "", cat.id);
+            //   Carousel.appendCarousel(item);
+            // });
             _context.next = 7;
             return _axios.default.get("/v1/breeds/search?q=".concat(e.target.selectedOptions[0].text.replace(/ /g, "_")), config);
           case 7:
@@ -12518,13 +12526,6 @@ function favourite(_x) {
  *    If that isn't in its own function, maybe it should be so you don't have to
  *    repeat yourself in this section.
  */
-/**
- * 10. Test your site, thoroughly!
- * - What happens when you try to load the Malayan breed?
- *  - If this is working, good job! If not, look for the reason why and fix it!
- * - Test other breeds as well. Not every breed has the same data available, so
- *   your code should account for this.
- */
 function _favourite() {
   _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
     var favorited, newFav;
@@ -12561,6 +12562,43 @@ function _favourite() {
   }));
   return _favourite.apply(this, arguments);
 }
+function getFavourites() {
+  return _getFavourites.apply(this, arguments);
+}
+function _getFavourites() {
+  _getFavourites = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    var favs, favoriteImgs;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.next = 2;
+          return _axios.default.get("/v1/favourites");
+        case 2:
+          favs = _context4.sent;
+          favoriteImgs = [];
+          console.log(favs);
+          favs.data.forEach(function (img) {
+            favoriteImgs.push(img.image);
+          });
+          Carousel.clear();
+          createCarousel(favoriteImgs);
+        case 8:
+        case "end":
+          return _context4.stop();
+      }
+    }, _callee4);
+  }));
+  return _getFavourites.apply(this, arguments);
+}
+getFavouritesBtn.addEventListener("click", getFavourites);
+
+/**
+ * 10. Test your site, thoroughly!
+ * - What happens when you try to load the Malayan breed?
+ *  - If this is working, good job! If not, look for the reason why and fix it!
+ * - Test other breeds as well. Not every breed has the same data available, so
+ *   your code should account for this.
+ */
 },{"./Carousel.js":"Carousel.js","axios":"node_modules/axios/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -12586,7 +12624,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62609" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56384" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

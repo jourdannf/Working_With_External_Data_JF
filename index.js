@@ -12,6 +12,7 @@ const getFavouritesBtn = document.getElementById('getFavouritesBtn');
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = 'live_eMeHzzPztN10fIggFCMNYjjEAvS6by7xoO011WgJNjQEoaOhfRI5nlqetsklJxgi';
+console.log("test");
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -123,27 +124,37 @@ initialLoad();
 breedSelect.addEventListener("change", axiosHandleSelection);
 
 function axiosHandleSelection(e){
+  e.preventDefault();
   Carousel.clear();
   // console.log(e.target.textContent);
 
+  var config = {
+    onDownloadProgress: (progressEvent) => {
+      updateProgress(progressEvent);
+    }
+  }
+
   async function getBreedsInfo(){
-    const specificBreeds = await axios.get(`/v1/images/search?breed_ids=${e.target.value}&limit=10`);
+    const specificBreeds = await axios.get(`/v1/images/search?breed_ids=${e.target.value}&limit=100`, config);
 
     specificBreeds.data.forEach((cat) => {
       let item = Carousel.createCarouselItem(cat.url, "", "");
       Carousel.appendCarousel(item);
     });
 
-  };
-
-  async function getFacts(){
-    const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`);
+    const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
 
     infoDump.textContent = facts.data[0].description;
-  }
+
+  };
+
+  // async function getFacts(){
+  //   const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
+
+  //   infoDump.textContent = facts.data[0].description;
+  // }
 
   getBreedsInfo();
-  getFacts();
 
 }
 
@@ -157,6 +168,7 @@ function axiosHandleSelection(e){
 axios.interceptors.request.use(request => {
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
+  progressBar.style.width = "0%";
   return request;
 });
 
@@ -192,7 +204,11 @@ axios.interceptors.response.use(
  *   with for future projects.
  */
 
-
+function updateProgress(progressEvtObj) {
+  let percentage = progressEvtObj.loaded/progressEvtObj.total;
+  progressBar.style.width = `${percentage*100}%`;
+   
+}
 
 /**
  * 7. As a final element of progress indication, add the following to your axios interceptors:

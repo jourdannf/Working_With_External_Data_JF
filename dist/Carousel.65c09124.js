@@ -12198,6 +12198,7 @@ var getFavouritesBtn = document.getElementById('getFavouritesBtn');
 
 // Step 0: Store your API key here for reference and easy access.
 var API_KEY = 'live_eMeHzzPztN10fIggFCMNYjjEAvS6by7xoO011WgJNjQEoaOhfRI5nlqetsklJxgi';
+console.log("test");
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -12292,15 +12293,15 @@ function initialLoad() {
   return _initialLoad.apply(this, arguments);
 }
 function _initialLoad() {
-  _initialLoad = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+  _initialLoad = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
     var response;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
         case 0:
-          _context3.next = 2;
+          _context2.next = 2;
           return _axios.default.get("/v1/breeds?limit=10&page=0");
         case 2:
-          response = _context3.sent;
+          response = _context2.sent;
           console.log(response);
           response.data.forEach(function (breed) {
             var option = document.createElement("option");
@@ -12310,9 +12311,9 @@ function _initialLoad() {
           });
         case 5:
         case "end":
-          return _context3.stop();
+          return _context2.stop();
       }
-    }, _callee3);
+    }, _callee2);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12320,26 +12321,38 @@ function _initialLoad() {
 initialLoad();
 breedSelect.addEventListener("change", axiosHandleSelection);
 function axiosHandleSelection(e) {
+  e.preventDefault();
   Carousel.clear();
   // console.log(e.target.textContent);
+
+  var config = {
+    onDownloadProgress: function onDownloadProgress(progressEvent) {
+      updateProgress(progressEvent);
+    }
+  };
   function getBreedsInfo() {
     return _getBreedsInfo.apply(this, arguments);
   }
   function _getBreedsInfo() {
     _getBreedsInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var specificBreeds;
+      var specificBreeds, facts;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return _axios.default.get("/v1/images/search?breed_ids=".concat(e.target.value, "&limit=10"));
+            return _axios.default.get("/v1/images/search?breed_ids=".concat(e.target.value, "&limit=100"), config);
           case 2:
             specificBreeds = _context.sent;
             specificBreeds.data.forEach(function (cat) {
               var item = Carousel.createCarouselItem(cat.url, "", "");
               Carousel.appendCarousel(item);
             });
-          case 4:
+            _context.next = 6;
+            return _axios.default.get("/v1/breeds/search?q=".concat(e.target.selectedOptions[0].text.replace(/ /g, "_")), config);
+          case 6:
+            facts = _context.sent;
+            infoDump.textContent = facts.data[0].description;
+          case 8:
           case "end":
             return _context.stop();
         }
@@ -12348,30 +12361,14 @@ function axiosHandleSelection(e) {
     return _getBreedsInfo.apply(this, arguments);
   }
   ;
-  function getFacts() {
-    return _getFacts.apply(this, arguments);
-  }
-  function _getFacts() {
-    _getFacts = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      var facts;
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return _axios.default.get("/v1/breeds/search?q=".concat(e.target.selectedOptions[0].text.replace(/ /g, "_")));
-          case 2:
-            facts = _context2.sent;
-            infoDump.textContent = facts.data[0].description;
-          case 4:
-          case "end":
-            return _context2.stop();
-        }
-      }, _callee2);
-    }));
-    return _getFacts.apply(this, arguments);
-  }
+
+  // async function getFacts(){
+  //   const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
+
+  //   infoDump.textContent = facts.data[0].description;
+  // }
+
   getBreedsInfo();
-  getFacts();
 }
 
 /**
@@ -12384,6 +12381,7 @@ function axiosHandleSelection(e) {
 _axios.default.interceptors.request.use(function (request) {
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
+  progressBar.style.width = "0%";
   return request;
 });
 _axios.default.interceptors.response.use(function (response) {
@@ -12413,6 +12411,11 @@ _axios.default.interceptors.response.use(function (response) {
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
+
+function updateProgress(progressEvtObj) {
+  var percentage = progressEvtObj.loaded / progressEvtObj.total;
+  progressBar.style.width = "".concat(percentage * 100, "%");
+}
 
 /**
  * 7. As a final element of progress indication, add the following to your axios interceptors:
@@ -12451,14 +12454,14 @@ function favourite(_x) {
  *   your code should account for this.
  */
 function _favourite() {
-  _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(imgId) {
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
         case "end":
-          return _context4.stop();
+          return _context3.stop();
       }
-    }, _callee4);
+    }, _callee3);
   }));
   return _favourite.apply(this, arguments);
 }
@@ -12556,7 +12559,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59137" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49681" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

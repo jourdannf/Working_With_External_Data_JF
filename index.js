@@ -12,7 +12,6 @@ const getFavouritesBtn = document.getElementById('getFavouritesBtn');
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = 'live_eMeHzzPztN10fIggFCMNYjjEAvS6by7xoO011WgJNjQEoaOhfRI5nlqetsklJxgi';
-console.log("test");
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -68,7 +67,7 @@ console.log("test");
 //     const jsonData = await specificBreeds.json();
 
 //     jsonData.forEach((cat) => {
-//       let item = Carousel.createCarouselItem(cat.url, "", "");
+//       let item = Carousel.createCarouselItem(cat.url, "", "cat.id");
 //       Carousel.appendCarousel(item);
 //     });
 
@@ -107,7 +106,10 @@ axios.defaults.headers.common['x-api-key'] = API_KEY;
 axios.defaults.baseURL = 'https://api.thecatapi.com';
 
 async function initialLoad() {
-  const response = await axios.get("/v1/breeds?limit=10&page=0");
+  const defaultSelect = breedSelect.appendChild(document.createElement("option"));
+  defaultSelect.textContent = "Please select a breed";
+  defaultSelect.setAttribute("value", "default");
+  const response = await axios.get("/v1/breeds?limit=100&page=0");
   // console.log(response);
 
   response.data.forEach(breed => {
@@ -124,16 +126,20 @@ initialLoad();
 breedSelect.addEventListener("change", axiosHandleSelection);
 
 function createCarousel(data){
+  
   data.forEach((cat) => {
-    let item = Carousel.createCarouselItem(cat.url, "", cat.id);
-    Carousel.appendCarousel(item);
+    console.log(cat)
+    let item = Carousel.createCarouselItem(cat.url, `Picture of ${cat.name}`, cat.id);
+    Carousel.appendCarousel(item);    
   });
 }
 
 function axiosHandleSelection(e){
-  e.preventDefault();
+  if (e.target.value == "default"){
+    return;
+  }
+
   Carousel.clear();
-  // console.log(e.target.textContent);
 
   var config = {
     onDownloadProgress: (progressEvent) => {
@@ -143,26 +149,22 @@ function axiosHandleSelection(e){
 
   async function getBreedsInfo(){
     const specificBreeds = await axios.get(`/v1/images/search?breed_ids=${e.target.value}&limit=100`, config);
-    console.log(specificBreeds.data);
+    if(specificBreeds.data.length === 0){
+      infoDump.textContent = "There are no pictures of this breed. Please select another.";
+      return;
+    }
+
+    for (let cat of specificBreeds.data) {
+      cat.name = cat.breeds[0].name;
+    }
 
     createCarousel(specificBreeds.data);
-
-    // specificBreeds.data.forEach((cat) => {
-    //   let item = Carousel.createCarouselItem(cat.url, "", cat.id);
-    //   Carousel.appendCarousel(item);
-    // });
 
     const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
 
     infoDump.textContent = facts.data[0].description;
 
   };
-
-  // async function getFacts(){
-  //   const facts = await axios.get(`/v1/breeds/search?q=${e.target.selectedOptions[0].text.replace(/ /g,"_")}`, config);
-
-  //   infoDump.textContent = facts.data[0].description;
-  // }
 
   getBreedsInfo();
 
@@ -253,6 +255,8 @@ export async function favourite(imgId) {
       const newFav = await axios.post('/v1/favourites', {
         "image_id": imgId
       });
+
+      console.log(await axios.get(`/v1/favourites`));
     }
   
 }
@@ -271,9 +275,15 @@ async function getFavourites() {
   const favs = await axios.get(`/v1/favourites`);
   let favoriteImgs = [];
   console.log(favs);
-  favs.data.forEach((img)=> {
+
+  for (const img of favs.data){
+    const cat = await axios.get(`v1/images/${img.image_id}`)
+    const name = cat.data.breeds[0].name;
+    img.image.name = name;
     favoriteImgs.push(img.image);
-  });
+  }
+
+  console.log(favoriteImgs);
   Carousel.clear();
   createCarousel(favoriteImgs);
 }

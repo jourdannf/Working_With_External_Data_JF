@@ -108,7 +108,7 @@ axios.defaults.baseURL = 'https://api.thecatapi.com';
 
 async function initialLoad() {
   const response = await axios.get("/v1/breeds?limit=10&page=0");
-  console.log(response);
+  // console.log(response);
 
   response.data.forEach(breed => {
     const option = document.createElement("option");
@@ -136,9 +136,10 @@ function axiosHandleSelection(e){
 
   async function getBreedsInfo(){
     const specificBreeds = await axios.get(`/v1/images/search?breed_ids=${e.target.value}&limit=100`, config);
+    console.log(specificBreeds.data);
 
     specificBreeds.data.forEach((cat) => {
-      let item = Carousel.createCarouselItem(cat.url, "", "");
+      let item = Carousel.createCarouselItem(cat.url, "", cat.id);
       Carousel.appendCarousel(item);
     });
 
@@ -218,9 +219,6 @@ function updateProgress(progressEvtObj) {
  * - In your request interceptor, set the body element's cursor style to "progress."
  * - In your response interceptor, remove the progress cursor style from the body element.
  */
-
-
-
 /**
  * 8. To practice posting data, we'll create a system to "favourite" certain images.
  * - The skeleton of this function has already been created for you.
@@ -233,7 +231,21 @@ function updateProgress(progressEvtObj) {
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 export async function favourite(imgId) {
-  // your code here
+    const favorited = await axios.get(`/v1/favourites?image_id=${imgId}`);
+
+    if (favorited.data.length !== 0) {
+      await axios.delete(`/v1/favourites/${favorited.data[0].id}`)
+      .catch(e=>{
+        console.log(e);
+      });
+
+    } else {
+      
+      const newFav = await axios.post('/v1/favourites', {
+        "image_id": imgId
+      });
+    }
+  
 }
 
 /**

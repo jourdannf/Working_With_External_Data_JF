@@ -12371,14 +12371,15 @@ function _initialLoad() {
           return _axios.default.get("/v1/breeds?limit=10&page=0");
         case 2:
           response = _context2.sent;
-          console.log(response);
+          // console.log(response);
+
           response.data.forEach(function (breed) {
             var option = document.createElement("option");
             option.setAttribute("value", breed.id);
             option.textContent = breed.name;
             breedSelect.appendChild(option);
           });
-        case 5:
+        case 4:
         case "end":
           return _context2.stop();
       }
@@ -12412,16 +12413,17 @@ function axiosHandleSelection(e) {
             return _axios.default.get("/v1/images/search?breed_ids=".concat(e.target.value, "&limit=100"), config);
           case 2:
             specificBreeds = _context.sent;
+            console.log(specificBreeds.data);
             specificBreeds.data.forEach(function (cat) {
-              var item = Carousel.createCarouselItem(cat.url, "", "");
+              var item = Carousel.createCarouselItem(cat.url, "", cat.id);
               Carousel.appendCarousel(item);
             });
-            _context.next = 6;
+            _context.next = 7;
             return _axios.default.get("/v1/breeds/search?q=".concat(e.target.selectedOptions[0].text.replace(/ /g, "_")), config);
-          case 6:
+          case 7:
             facts = _context.sent;
             infoDump.textContent = facts.data[0].description;
-          case 8:
+          case 9:
           case "end":
             return _context.stop();
         }
@@ -12493,7 +12495,6 @@ function updateProgress(progressEvtObj) {
  * - In your request interceptor, set the body element's cursor style to "progress."
  * - In your response interceptor, remove the progress cursor style from the body element.
  */
-
 /**
  * 8. To practice posting data, we'll create a system to "favourite" certain images.
  * - The skeleton of this function has already been created for you.
@@ -12526,9 +12527,33 @@ function favourite(_x) {
  */
 function _favourite() {
   _favourite = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
+    var favorited, newFav;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
+          _context3.next = 2;
+          return _axios.default.get("/v1/favourites?image_id=".concat(imgId));
+        case 2:
+          favorited = _context3.sent;
+          if (!(favorited.data.length !== 0)) {
+            _context3.next = 8;
+            break;
+          }
+          _context3.next = 6;
+          return _axios.default.delete("/v1/favourites/".concat(favorited.data[0].id)).catch(function (e) {
+            console.log(e);
+          });
+        case 6:
+          _context3.next = 11;
+          break;
+        case 8:
+          _context3.next = 10;
+          return _axios.default.post('/v1/favourites', {
+            "image_id": imgId
+          });
+        case 10:
+          newFav = _context3.sent;
+        case 11:
         case "end":
           return _context3.stop();
       }
@@ -12561,7 +12586,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65057" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62609" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

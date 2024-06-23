@@ -169,6 +169,7 @@ axios.interceptors.request.use(request => {
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
   progressBar.style.width = "0%";
+  document.querySelector("body").style.cursor = "progress";
   return request;
 });
 
@@ -178,6 +179,8 @@ axios.interceptors.response.use(
       response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
 
       console.log(`Request took ${response.config.metadata.durationInMS} milliseconds.`)
+
+      document.querySelector("body").style.cursor = "";
       return response;
   },
   (error) => {
@@ -215,6 +218,7 @@ function updateProgress(progressEvtObj) {
  * - In your request interceptor, set the body element's cursor style to "progress."
  * - In your response interceptor, remove the progress cursor style from the body element.
  */
+
 
 
 /**

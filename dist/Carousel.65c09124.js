@@ -12382,12 +12382,14 @@ _axios.default.interceptors.request.use(function (request) {
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
   progressBar.style.width = "0%";
+  document.querySelector("body").style.cursor = "progress";
   return request;
 });
 _axios.default.interceptors.response.use(function (response) {
   response.config.metadata.endTime = new Date().getTime();
   response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
   console.log("Request took ".concat(response.config.metadata.durationInMS, " milliseconds."));
+  document.querySelector("body").style.cursor = "";
   return response;
 }, function (error) {
   error.config.metadata.endTime = new Date().getTime();
@@ -12559,7 +12561,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49681" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65057" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
